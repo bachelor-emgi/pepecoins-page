@@ -118,7 +118,7 @@ function createBalanceChart(data) {
 
       tooltip
         .style("display", "block")
-      .style("border-radius", "24px")
+        .style("border-radius", "24px")
         .style("left", `${event.pageX + 10}px`)
         .style("top", `${event.pageY - 28}px`)
         .html(`Date: ${d3.timeFormat("%b %d, %Y")(d.date)}<br>Price: ${formatCurrency(d.value, userCurrency)}`);
@@ -184,7 +184,7 @@ function createBarChart(containerId, data, color, labelPrefix = "Volume") {
     .on("mousemove", function (event, d, i) {
       tooltip
         .style("display", "block")
-      .style("border-radius", "24px")
+        .style("border-radius", "24px")
         .style("left", `${event.pageX + 10}px`)
         .style("top", `${event.pageY - 28}px`)
         .html(`${labelPrefix}: ${formatCurrency(d, userCurrency)}`);
@@ -293,7 +293,7 @@ function createGreedIndexChart(components, mainValue, changeValue) {
     .on("mousemove", function (event, d) {
       tooltip
         .style("display", "block")
-      .style("border-radius", "24px")
+        .style("border-radius", "24px")
         .style("left", `${event.pageX + 10}px`)
         .style("top", `${event.pageY - 28}px`)
         .html(`${d.data.label}: ${d.data.value}%`);
@@ -330,7 +330,7 @@ async function updateDashboardFromApi() {
 
   const priceObj = data.market_data.current_price;
   document.getElementById("todayVolume").textContent =
-  formatCurrency(data.market_data.total_volume?.usd || 0, "usd").replace(/\.00$/, "");
+    formatCurrency(data.market_data.total_volume?.usd || 0, "usd").replace(/\.00$/, "");
   document.getElementById("currentPrice").textContent = formatCurrency(priceObj["usd"], "usd");
 
   // -- Markets Table --
@@ -439,7 +439,7 @@ function createPriceChangeHeatmap(containerId, sparkline, currentPrice) {
     .on("mousemove", function (event, d) {
       tooltip
         .style("display", "block")
-      .style("border-radius", "24px")
+        .style("border-radius", "24px")
         .style("left", `${event.pageX + 10}px`)
         .style("top", `${event.pageY - 28}px`)
         .html(
@@ -551,10 +551,10 @@ function createTrustScoreChart(containerId, tickers) {
     .attr("x", 0)
     .attr("width", (d) => x(d.trustScoreValue))
     .attr("fill", (d) => colorMap[d.trustScoreValue] || "#888")
-    .on("mousemove", function(event, d) {
+    .on("mousemove", function (event, d) {
       tooltip
         .style("display", "block")
-      .style("border-radius", "24px")
+        .style("border-radius", "24px")
         .html(
           `<strong>${d.market.name}</strong><br>
           Trust Score: <span style="color:${colorMap[d.trustScoreValue]}">${TRUST_LABEL[d.trustScoreValue]}</span><br>
@@ -563,7 +563,7 @@ function createTrustScoreChart(containerId, tickers) {
         .style("left", (event.offsetX + margin.left + 30) + "px")
         .style("top", (event.offsetY + margin.top - 10) + "px");
     })
-    .on("mouseleave", function() {
+    .on("mouseleave", function () {
       tooltip.style("display", "none");
     });
 
