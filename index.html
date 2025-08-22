@@ -11,7 +11,7 @@
     <link rel="canonical" href="https://pepecoins.org/" />
 
     <!-- Open Graph Meta Tags -->
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta property="og:locale" content="en_US" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Pepecoin | The Original Pepe Meme Coin" />
@@ -45,21 +45,126 @@
 
 <body class="bg-gradient-to-br from-purple-900 to-indigo-900 text-white font-inter min-h-screen">
     <div class="container mx-auto p-4">
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-2xl font-bold">Pepecoin</h1>
-            <nav>
-                <ul class="flex space-x-4">
-                    <li><a href="#" class="nav-link active" data-page="dashboard">Dashboard</a></li>
-                    <li><a href="#" class="nav-link" data-page="swap">Swap</a></li>
-                    <li><a href="#" class="nav-link" data-page="wallet">Wallets</a></li>
-                    <li><a href="#" class="nav-link" data-page="about">About</a></li>
-                </ul>
-            </nav>
-            <a href="https://pepecoinnews.com"
-                class="connect-wallet-btn transition-all duration-300 transform hover:scale-105" target="_blank"
-                rel="noopener">
-                Pepecoin News
-            </a>
+        <header class="w-full bg-transparent mb-8">
+            <div class="max-w-4xl mx-auto flex items-center justify-between px-4 py-3 relative">
+                <!-- Logo -->
+                <h1 class="text-2xl font-bold">Pepecoin</h1>
+                <!-- Hamburger button (mobile only) -->
+                <button id="nav-toggle"
+                    class="sm:hidden flex flex-col justify-center items-center p-2 rounded hover:bg-white/10 focus:outline-none transition"
+                    aria-label="Toggle navigation">
+                    <span class="block w-7 h-0.5 bg-white mb-1"></span>
+                    <span class="block w-7 h-0.5 bg-white mb-1"></span>
+                    <span class="block w-7 h-0.5 bg-white"></span>
+                </button>
+                <!-- Desktop nav (no .active class) -->
+                <nav class="hidden sm:flex items-center space-x-6">
+                    <a href="#" class="nav-link py-2 px-4 rounded hover:bg-white/10 transition"
+                        data-page="dashboard">Dashboard</a>
+                    <a href="#" class="nav-link py-2 px-4 rounded hover:bg-white/10 transition"
+                        data-page="swap">Swap</a>
+                    <a href="#" class="nav-link py-2 px-4 rounded hover:bg-white/10 transition"
+                        data-page="wallet">Wallets</a>
+                    <a href="#" class="nav-link py-2 px-4 rounded hover:bg-white/10 transition"
+                        data-page="about">About</a>
+                    <a href="https://pepecoinnews.com"
+                        class="connect-wallet-btn transition-all duration-300 transform hover:scale-105 ml-2"
+                        target="_blank" rel="noopener">
+                        Pepecoin News
+                    </a>
+                </nav>
+            </div>
+            <!-- Slide-down mobile menu -->
+            <div id="nav-menu"
+                class="sm:hidden max-h-0 overflow-hidden transition-all duration-300 w-full absolute left-0 z-20 px-4 bg-gradient-to-br from-purple-900 to-indigo-900"
+                style="top:68px;">
+
+
+                <!-- Mobile nav (no .active class) -->
+                <nav class="flex flex-col items-center py-2 space-y-2">
+                    <a href="#" class="nav-link block py-2 px-4 rounded hover:bg-white/10 transition w-full text-center"
+                        data-page="dashboard">Dashboard</a>
+                    <a href="#" class="nav-link block py-2 px-4 rounded hover:bg-white/10 transition w-full text-center"
+                        data-page="swap">Swap</a>
+                    <a href="#" class="nav-link block py-2 px-4 rounded hover:bg-white/10 transition w-full text-center"
+                        data-page="wallet">Wallets</a>
+                    <a href="#" class="nav-link block py-2 px-4 rounded hover:bg-white/10 transition w-full text-center"
+                        data-page="about">About</a>
+                    <a href="https://pepecoinnews.com"
+                        class="connect-wallet-btn transition-all duration-300 transform hover:scale-105 w-full block text-center"
+                        target="_blank" rel="noopener">
+                        Pepecoin News
+                    </a>
+                </nav>
+            </div>
+            <style>
+                .nav-link {
+                    color: white;
+                    transition: background 0.2s, color 0.2s;
+                }
+
+                .connect-wallet-btn {
+                    font-weight: 600;
+                    padding: 0.5rem 1.25rem;
+                    border-radius: 24px;
+                    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+                }
+
+                .connect-wallet-btn:hover {
+                    filter: brightness(1.08);
+                }
+            </style>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const toggle = document.getElementById('nav-toggle');
+                    const menu = document.getElementById('nav-menu');
+                    let open = false;
+
+                    toggle.addEventListener('click', function () {
+                        open = !open;
+                        if (open) {
+                            menu.classList.remove('max-h-0');
+                            menu.classList.add('max-h-[600px]');
+                            menu.classList.add('min-h-screen');
+                        } else {
+                            menu.classList.remove('max-h-[600px]');
+                            menu.classList.remove('min-h-screen');
+                            menu.classList.add('max-h-0');
+                        }
+                    });
+
+                    // All nav links (both desktop and mobile)
+                    function setActiveNav(page) {
+                        document.querySelectorAll('.nav-link').forEach(link => {
+                            if (link.dataset.page === page) {
+                                link.classList.add('active');
+                            } else {
+                                link.classList.remove('active');
+                            }
+                        });
+                    }
+
+                    // Attach click handler to all nav-links
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        link.addEventListener('click', function (e) {
+                            // Only handle internal links, not Pepecoin News
+                            if (link.dataset.page) {
+                                setActiveNav(link.dataset.page);
+                                // Close menu on mobile
+                                open = false;
+                                menu.classList.remove('max-h-[600px]');
+                                menu.classList.remove('min-h-screen');
+                                menu.classList.add('max-h-0');
+                                // Prevent default navigation if using SPA
+                                // e.preventDefault();
+                            }
+                        });
+                    });
+
+                    // Optionally, set default active page on load (e.g., dashboard)
+                    setActiveNav('dashboard');
+                });
+            </script>
         </header>
 
         <main id="main-content" class="flex flex-col space-y-6">
@@ -79,12 +184,12 @@
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2">
-                            <div class="flex justify-between items-end mb-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <h3 class="text-lg font-semibold">Today Volume</h3>
                                     <p class="text-3xl font-bold"><span id="todayVolume"></span></p>
                                 </div>
-                                <div class="text-right">
+                                <div class="sm:text-right">
                                     <h3 class="text-lg font-semibold">Price</h3>
                                     <p class="text-3xl font-bold"><span id="currentPrice"></span></p>
                                 </div>

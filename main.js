@@ -75,19 +75,6 @@ function createBalanceChart(data) {
     .attr("d", line)
     .style("filter", "url(#glow)");
 
-  svg.selectAll(".dot")
-    .data(data)
-    .enter()
-    .append("circle")
-    .attr("class", "dot")
-    .attr("cx", (d) => x(d.date))
-    .attr("cy", (d) => y(d.value))
-    .attr("r", 5)
-    .style("fill", "#00ffbfff")
-    .style("stroke", "#16532A")
-    .style("stroke-width", 2)
-    .style("filter", "url(#glow)");
-
   svg.append("g")
     .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(x).ticks(5).tickFormat(d3.timeFormat("%b %d")))
