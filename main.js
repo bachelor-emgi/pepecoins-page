@@ -118,6 +118,7 @@ function createBalanceChart(data) {
 
       tooltip
         .style("display", "block")
+      .style("border-radius", "24px")
         .style("left", `${event.pageX + 10}px`)
         .style("top", `${event.pageY - 28}px`)
         .html(`Date: ${d3.timeFormat("%b %d, %Y")(d.date)}<br>Price: ${formatCurrency(d.value, userCurrency)}`);
@@ -183,6 +184,7 @@ function createBarChart(containerId, data, color, labelPrefix = "Volume") {
     .on("mousemove", function (event, d, i) {
       tooltip
         .style("display", "block")
+      .style("border-radius", "24px")
         .style("left", `${event.pageX + 10}px`)
         .style("top", `${event.pageY - 28}px`)
         .html(`${labelPrefix}: ${formatCurrency(d, userCurrency)}`);
@@ -291,6 +293,7 @@ function createGreedIndexChart(components, mainValue, changeValue) {
     .on("mousemove", function (event, d) {
       tooltip
         .style("display", "block")
+      .style("border-radius", "24px")
         .style("left", `${event.pageX + 10}px`)
         .style("top", `${event.pageY - 28}px`)
         .html(`${d.data.label}: ${d.data.value}%`);
@@ -436,6 +439,7 @@ function createPriceChangeHeatmap(containerId, sparkline, currentPrice) {
     .on("mousemove", function (event, d) {
       tooltip
         .style("display", "block")
+      .style("border-radius", "24px")
         .style("left", `${event.pageX + 10}px`)
         .style("top", `${event.pageY - 28}px`)
         .html(
@@ -465,10 +469,29 @@ function createPriceChangeHeatmap(containerId, sparkline, currentPrice) {
 
 function createTrustScoreChart(containerId, tickers) {
   const TRUST_RANK = { green: 3, yellow: 2, red: 1 };
+  const TRUST_LABEL = { 3: "Green", 2: "Yellow", 1: "Red" };
   const margin = { top: 20, right: 20, bottom: 30, left: 120 };
   const width = document.getElementById(containerId).clientWidth - margin.left - margin.right;
   const height = document.getElementById(containerId).clientHeight - margin.top - margin.bottom;
   d3.select(`#${containerId}`).selectAll("*").remove();
+
+  // Tooltip div (one per chart)
+  let tooltip = d3.select(`#${containerId}`).select(".tooltip");
+  if (tooltip.empty()) {
+    tooltip = d3.select(`#${containerId}`)
+      .append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("background", "rgba(40,40,40,0.98)")
+      .style("color", "#fff")
+      .style("padding", "10px 16px")
+      .style("border-radius", "24px")
+      .style("pointer-events", "none")
+      .style("font-size", "14px")
+      .style("box-shadow", "0 4px 16px rgba(0,0,0,0.18)")
+      .style("z-index", 10)
+      .style("display", "none");
+  }
 
   // Prepare exchanges by trust score
   const exchanges = tickers
@@ -516,6 +539,7 @@ function createTrustScoreChart(containerId, tickers) {
 
   const colorMap = { 3: "#22c55e", 2: "#eab308", 1: "#ef4444" };
 
+  // Bars with tooltip
   svg
     .selectAll(".bar")
     .data(exchanges)
@@ -526,21 +550,22 @@ function createTrustScoreChart(containerId, tickers) {
     .attr("height", y.bandwidth())
     .attr("x", 0)
     .attr("width", (d) => x(d.trustScoreValue))
-    .attr("fill", (d) => colorMap[d.trustScoreValue] || "#888");
-
-  // Add trust score text labels
-  svg
-    .selectAll(".bar-label")
-    .data(exchanges)
-    .enter()
-    .append("text")
-    .attr("class", "bar-label")
-    .attr("x", (d) => x(d.trustScoreValue) + 8)
-    .attr("y", (d) => y(d.market.name) + y.bandwidth() / 2 + 5)
-    .text((d) => d.trust_score.charAt(0).toUpperCase() + d.trust_score.slice(1))
-    .style("fill", "#fff")
-    .style("font-weight", "bold")
-    .style("font-size", "14px");
+    .attr("fill", (d) => colorMap[d.trustScoreValue] || "#888")
+    .on("mousemove", function(event, d) {
+      tooltip
+        .style("display", "block")
+      .style("border-radius", "24px")
+        .html(
+          `<strong>${d.market.name}</strong><br>
+          Trust Score: <span style="color:${colorMap[d.trustScoreValue]}">${TRUST_LABEL[d.trustScoreValue]}</span><br>
+          Volume: $${d3.format(",.0f")(d.converted_volume?.usd ?? 0)}`
+        )
+        .style("left", (event.offsetX + margin.left + 30) + "px")
+        .style("top", (event.offsetY + margin.top - 10) + "px");
+    })
+    .on("mouseleave", function() {
+      tooltip.style("display", "none");
+    });
 
   svg
     .append("g")
