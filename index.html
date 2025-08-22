@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhiteLabel Crypto Wallet</title>
+    <script src="tailwind.js"></script>
+    <script src="d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="https://letsexchange.io/widget_lets.css">
+</head>
+
+<body class="bg-gradient-to-br from-purple-900 to-indigo-900 text-white font-inter min-h-screen">
+    <div class="container mx-auto p-4">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold">Pepecoin</h1>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="#" class="nav-link active" data-page="dashboard">Dashboard</a></li>
+                    <li><a href="#" class="nav-link" data-page="swap">Swap</a></li>
+                    <li><a href="#" class="nav-link" data-page="markets">Buy</a></li>
+                    <li><a href="#" class="nav-link" data-page="wallet">Wallets</a></li>
+                </ul>
+            </nav>
+            <a href="https://pepecoinnews.com"
+                class="connect-wallet-btn transition-all duration-300 transform hover:scale-105" target="_blank"
+                rel="noopener">
+                Pepecoin News
+            </a>
+        </header>
+
+        <main id="main-content" class="flex flex-col space-y-6">
+            <div id="dashboard-page" class="page-content">
+                <div class="glass-card p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold">Dashboard</h2>
+                        <div class="time-selector flex space-x-2">
+                            <button class="time-btn active" data-period="1">24H</button>
+                            <button class="time-btn" data-period="2">2D</button>
+                            <button class="time-btn" data-period="3">3D</button>
+                            <button class="time-btn" data-period="4">4D</button>
+                            <button class="time-btn" data-period="5">5D</button>
+                            <button class="time-btn" data-period="6">6D</button>
+                            <button class="time-btn" data-period="7">7D</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2">
+                            <div class="flex justify-between items-end mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold">Today Volume</h3>
+                                    <p class="text-3xl font-bold"><span id="todayVolume"></span></p>
+                                </div>
+                                <div class="text-right">
+                                    <h3 class="text-lg font-semibold">Price</h3>
+                                    <p class="text-3xl font-bold"><span id="currentPrice"></span></p>
+                                </div>
+                            </div>
+                            <div id="balanceChart" class="h-64 chart-background" aria-label="Balance over time chart">
+                            </div>
+                        </div>
+                        <div class="glass-card p-6">
+                            <h3 class="text-lg font-semibold mb-4">Swap</h3>
+                            <div class="space-y-4">
+                                <iframe id="stealthex-widget"
+                                    src="https://stealthex.io/widget/dbb0f2b9-89e3-4629-9d40-062fed7b3be4"
+                                    style="border: none; border-radius: 10px; overflow: hidden; width: 100%; max-width: 960px; height: 330px; box-shadow: 0px 0px 32px 0px rgba(0, 0, 0, 0.06)"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-2">Price Change Heatmap (7d)</h3>
+                        <div id="salesStats"></div>
+                        <div id="salesChart" class="h-48 mt-4" aria-label="Price change heatmap"></div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-2">Top Exchanges By Trust Score</h3>
+                        <div id="exchangeStats"></div>
+                        <div id="exchangeChart" class="h-48 mt-4" aria-label="Trust score chart"></div>
+                    </div>
+                    <div class="glass-card p-6">
+                        <h3 class="text-lg font-semibold mb-2">Greed Index (7d)</h3>
+                        <div id="greedIndexChart" class="h-48" aria-label="Greed index chart"></div>
+                        <p class="text-center mt-4">
+                            <span class="text-2xl font-bold"><span id="greedIndexValue"></span>%</span>
+                            <span class="text-green-400 ml-2"><span id="greedIndexChange"></span></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 mt-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold">Markets</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full token-table">
+                            <thead>
+                                <tr>
+                                    <th>Exchange</th>
+                                    <th>Pair</th>
+                                    <th>Price</th>
+                                    <th>Volume (24H)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marketsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="swap-page" class="page-content hidden">
+                <div class="glass-card p-6">
+                    <h2 class="text-2xl font-semibold mb-6">Swap To Pepecoin</h2>
+                    <div class="max-w-md mx-auto">
+                        <div class="lets-widget" id="lets_widget_M8A0we1CtDfPaTIU"
+                            style="max-width: 480px; height: 480px;">
+                            <iframe src="https://letsexchange.io/v2/widget?affiliate_id=M8A0we1CtDfPaTIU&is_iframe=true"
+                                width="100%" height="100%" frameBorder="0"
+                                allow="clipboard-read; clipboard-write"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="markets-page" class="page-content hidden">
+                <div class="glass-card p-6">
+                    <h2 class="text-2xl font-semibold mb-6">Buy Pepecoin</h2>
+                    <div class="overflow-x-auto max-w-md mx-auto">
+                        <iframe id="pepecoin-alchemy-pay" height="700" title="AlchemyPay On/Off Ramp Widget"
+                            src="https://ramp.alchemypay.org/?appId=6ulA4NYEp7T1IOiJ#/index" frameborder="no"
+                            allowtransparency="true" allowfullscreen=""
+                            style="display: block; width: 100%; max-width: 500px; height: 700px; padding: 0px; border: none; border-radius: 16px; box-shadow: rgba(0, 0, 0, 0.15) 0px 8px 24px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; transform: translateY(0px);">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div id="wallet-page" class="page-content hidden">
+                <div class="glass-card p-6">
+                    <h2 class="text-2xl font-semibold mb-6">Pepecoin Wallets</h2>
+                    <div class="gap-6">
+                        <div>
+                            <h3 class="text-xl font-semibold mb-4">Always do your own research</h3>
+                            <ul id="assetList" class="grid grid-cols-1 md:grid-cols-4 gap-6"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="tooltip" class="tooltip"></div>
+
+    <script src="main.js"></script>
+    <script src="https://letsexchange.io/init_widget.js"></script>
+
+    <footer class="bg-gradient-to-r from-purple-900 to-indigo-900 border-t border-white/10 mt-10 py-6" style="text-align: center;">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-8">
+                <!-- Wallets -->
+                <div>
+                    <h4 class="text-base font-bold mb-2">Wallets</h4>
+                    <ul class="space-y-1">
+                        <li><a href="" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">Tangem</a></li>
+                        <li><a href="https://www.coinomi.com/en/downloads/" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">Coinomi</a></li>
+                        <li><a href="https://komodoplatform.com/en/wallet/" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">Komodo</a></li>
+                        <li><a href="/wallets-list/" class="hover:underline hover:text-indigo-300 transition">More
+                                Wallets</a></li>
+                    </ul>
+                </div>
+                <!-- Exchanges -->
+                <div>
+                    <h4 class="text-base font-bold mb-2">Exchanges</h4>
+                    <ul class="space-y-1">
+                        <li><a href="https://promote.mexc.com/r/FUn9st3V?_from=pepecoinnews.com" target="_blank"
+                                rel="noopener" class="hover:underline hover:text-indigo-300 transition">MEXC</a></li>
+                        <li><a href="https://www.coinex.com/register?rc=s8e7r&amp;channel=Referral" target="_blank"
+                                rel="noopener" class="hover:underline hover:text-indigo-300 transition">CoinEx</a></li>
+                        <li><a href="https://stakecube.net/app/exchange/pep_usdt?team=emgi2" target="_blank"
+                                rel="noopener" class="hover:underline hover:text-indigo-300 transition">StakeCube</a>
+                        </li>
+                        <li><a href="/exchanges/" class="hover:underline hover:text-indigo-300 transition">More
+                                Exchanges</a></li>
+                    </ul>
+                </div>
+                <!-- Explorers -->
+                <div>
+                    <h4 class="text-base font-bold mb-2">Explorers</h4>
+                    <ul class="space-y-1">
+                        <li><a href="https://pepeblocks.com/" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">PepeBlocks</a></li>
+                        <li><a href="https://pepecoinexplorer.com/" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">PepecoinExplorer</a></li>
+                        <li><a href="https://pepeplorer.com/" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">PepePlorer</a></li>
+                        <li><a href="https://www.coinexplorer.net/PEP" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">CoinExplorer</a></li>
+                    </ul>
+                </div>
+                <!-- Faucets -->
+                <div>
+                    <h4 class="text-base font-bold mb-2">Faucets</h4>
+                    <ul class="space-y-1">
+                        <li><a href="https://pepecoin-nodes.com/faucet" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">Pepecoin Nodes Map Faucet</a>
+                        </li>
+                        <li><a href="https://pepeblocks.com/faucet/" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">PepeBlocks Faucet</a></li>
+                        <li><a href="https://stakecube.net/app/community" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">StakeCube Faucet</a></li>
+                        <li><a href="/pepecoin-faucets/" class="hover:underline hover:text-indigo-300 transition">More
+                                Faucets</a></li>
+                    </ul>
+                </div>
+                <!-- My Projects -->
+                <div>
+                    <h4 class="text-base font-bold mb-2">My Projects</h4>
+                    <ul class="space-y-1">
+                        <li><a href="https://pepecoin-nodes.com/" target="_blank" rel="noopener"
+                                class="hover:underline hover:text-indigo-300 transition">Pepecoin Nodes Map</a></li>
+                        <li><a href="/electrumx/" class="hover:underline hover:text-indigo-300 transition">ElectrumX in
+                                Docker</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
