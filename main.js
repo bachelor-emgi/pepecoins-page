@@ -596,17 +596,36 @@ document.querySelectorAll(".time-btn").forEach((btn, idx) => {
 });
 
 // Navigation: only dashboard triggers updateDashboardFromApi
-document.querySelectorAll(".nav-link").forEach((link) => {
+document.querySelectorAll("[data-page]").forEach((link) => {
   link.addEventListener("click", function (e) {
     e.preventDefault();
-    document.querySelector(".nav-link.active").classList.remove("active");
-    this.classList.add("active");
+
     const targetPage = this.dataset.page;
+
+    // remove old active
+    document.querySelector(".nav-link.active")?.classList.remove("active");
+
+    // if the clicked link is inside nav, mark it active
+    if (this.classList.contains("nav-link")) {
+      this.classList.add("active");
+    }
+    // if the clicked link is the logo (h1), activate the dashboard nav link
+    else if (targetPage === "dashboard") {
+      document.querySelector('.nav-link[data-page="dashboard"]')
+        ?.classList.add("active");
+    }
+
+    // hide all sections
     document.querySelectorAll(".page-content").forEach((page) => {
       page.classList.add("hidden");
     });
+    // show target
     document.getElementById(`${targetPage}-page`).classList.remove("hidden");
-    if (targetPage === "dashboard") updateDashboardFromApi();
+
+    // reload dashboard if needed
+    if (targetPage === "dashboard") {
+      updateDashboardFromApi();
+    }
   });
 });
 
